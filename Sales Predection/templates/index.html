@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outlet Sales Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("form").on("submit", function(event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                $.ajax({
+                    type: "POST",
+                    url: "/predict", // The endpoint for prediction
+                    data: $(this).serialize(), // Serialize the form data
+                    success: function(response) {
+                        // Assuming 'response' contains the prediction
+                        $("#prediction").html("Predicted Outlet Sales: ₹" + response.prediction);
+                    },
+                    error: function() {
+                        $("#prediction").html("Error predicting outlet sales.");
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Predict Outlet Sales (1 Hour)</h1>
+    <form>
+        <label for="outlet_establishment_year">Outlet Establishment Year:</label>
+        <select id="outlet_establishment_year" name="outlet_establishment_year" required>
+            {% for year in range(1980, 2025) %}
+                <option value="{{ year }}">{{ year }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="outlet_size">Outlet Size:</label>
+        <select id="outlet_size" name="outlet_size" required>
+            <option value="Small">Small</option>
+            <option value="Medium">Medium</option>
+            <option value="Large">Large</option>
+        </select><br><br>
+
+        <label for="outlet_location_type">Outlet Location Type:</label>
+        <select id="outlet_location_type" name="outlet_location_type" required>
+            <option value="Tier 1">Tier 1</option>
+            <option value="Tier 2">Tier 2</option>
+            <option value="Tier 3">Tier 3</option>
+        </select><br><br>
+
+        <label for="outlet_type">Outlet Type:</label>
+        <select id="outlet_type" name="outlet_type" required>
+            <option value="Supermarket Type1">Supermarket Type1</option>
+            <option value="Supermarket Type2">Supermarket Type2</option>
+            <option value="Grocery Store">Grocery Store</option>
+            <option value="Others">Others</option>
+        </select><br><br>
+
+        <input type="submit" value="Predict">
+    </form>
+
+    <div id="prediction"></div> <!-- This div will show the prediction -->
+</body>
+</html>
